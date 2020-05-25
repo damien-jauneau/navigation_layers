@@ -68,6 +68,8 @@ private:
   std::vector<ros::Subscriber> range_subs_;
   double min_x_, min_y_, max_x_, max_y_;
 
+  float transform_tolerance_;
+
   dynamic_reconfigure::Server<range_sensor_layer::RangeSensorLayerConfig> *dsrv_;
 
 

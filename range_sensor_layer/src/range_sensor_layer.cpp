@@ -33,6 +33,7 @@ void RangeSensorLayer::onInitialize()
 
   nh.param("ns", topics_ns, std::string());
   nh.param("topics", topic_names, topic_names);
+  nh.param("transform_tolerance_", transform_tolerance_, float(0.3));
 
   InputSensorType input_sensor_type = ALL;
   std::string sensor_type_name;
@@ -242,7 +243,7 @@ void RangeSensorLayer::updateCostmap(sensor_msgs::Range& range_message, bool cle
   in.header.stamp = range_message.header.stamp;
   in.header.frame_id = range_message.header.frame_id;
 
-  if(!tf_->waitForTransform(global_frame_, in.header.frame_id, in.header.stamp, ros::Duration(0.1)) )
+  if(!tf_->waitForTransform(global_frame_, in.header.frame_id, in.header.stamp, ros::Duration(transform_tolerance_)) )
   {
     ROS_ERROR_THROTTLE(1.0, "Range sensor layer can't transform from %s to %s at %f",
         global_frame_.c_str(), in.header.frame_id.c_str(),
@@ -417,25 +418,30 @@ void RangeSensorLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i
     for (int i = min_i; i < max_i; i++)
     {
       unsigned char prob = costmap_[it];
+          unsigned char old_cost = master_array[it];
       unsigned char current;
       if(prob==costmap_2d::NO_INFORMATION){
         it++;
         continue;
       }
-      else if(prob>mark)
+      else if(prob>mark){
         current = costmap_2d::LETHAL_OBSTACLE;
-      else if(prob<clear)
+        if (old_cost == NO_INFORMATION || old_cost < current){
+                master_array[it] = current;
+        }
+        it++;
+      }
+      else if(prob<clear){
         current = costmap_2d::FREE_SPACE;
+        if (old_cost > current){
+                master_array[it] = current;
+        }
+        it++;
+      }
       else{
         it++;
         continue;
       }
-
-      unsigned char old_cost = master_array[it];
-
-      if (old_cost == NO_INFORMATION || old_cost < current)
-        master_array[it] = current;
-      it++;
     }
   }
 
