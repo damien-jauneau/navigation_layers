@@ -2,6 +2,7 @@
 #include <boost/algorithm/string.hpp>
 #include <pluginlib/class_list_macros.h>
 #include <angles/angles.h>
+#include <utility>
 
 PLUGINLIB_EXPORT_CLASS(range_sensor_layer::RangeSensorLayer, costmap_2d::Layer)
 
@@ -21,8 +22,8 @@ void RangeSensorLayer::onInitialize()
   default_value_ = to_cost(0.5);
 
   matchSize();
-  min_x_ = min_y_ = -std::numeric_limits<double>::max();
-  max_x_ = max_y_ = std::numeric_limits<double>::max();
+  min_x_ = min_y_ = std::numeric_limits<double>::max();
+  max_x_ = max_y_ = -std::numeric_limits<double>::max();
 
   // Default topic names list contains a single topic: /sonar
   // We use the XmlRpcValue constructor that takes a XML string and reading start offset
@@ -344,6 +345,7 @@ void RangeSensorLayer::updateCostmap(sensor_msgs::Range& range_message, bool cle
   last_reading_time_ = ros::Time::now();
 }
 
+
 void RangeSensorLayer::update_cell(double ox, double oy, double ot, double r, double nx, double ny, bool clear)
 {
   unsigned int x, y;
@@ -381,7 +383,7 @@ void RangeSensorLayer::updateBounds(double robot_x, double robot_y, double robot
   *max_y = std::max(*max_y, max_y_);
 
   min_x_ = min_y_ = std::numeric_limits<double>::max();
-  max_x_ = max_y_ = std::numeric_limits<double>::min();
+  max_x_ = max_y_ = -std::numeric_limits<double>::max();
 
   if (!enabled_)
   {
