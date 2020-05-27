@@ -2,7 +2,6 @@
 #include <boost/algorithm/string.hpp>
 #include <pluginlib/class_list_macros.h>
 #include <angles/angles.h>
-#include <utility>
 
 PLUGINLIB_EXPORT_CLASS(range_sensor_layer::RangeSensorLayer, costmap_2d::Layer)
 

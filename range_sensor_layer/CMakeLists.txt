@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(range_sensor_layer)
+set (CMAKE_CXX_STANDARD 11)
 
 find_package(catkin REQUIRED COMPONENTS
   angles
@@ -37,4 +38,4 @@ install(FILES costmap_plugins.xml
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
-catkin_install_python(PROGRAMS scripts/send_message.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+#catkin_install_python(PROGRAMS scripts/send_message.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
