@@ -33,7 +33,7 @@ void RangeSensorLayer::onInitialize()
 
   nh.param("ns", topics_ns, std::string());
   nh.param("topics", topic_names, topic_names);
-  nh.param("transform_tolerance_", transform_tolerance_, float(0.3));
+  nh.param("transform_tolerance_", transform_tolerance_, float(1.0));
 
   InputSensorType input_sensor_type = ALL;
   std::string sensor_type_name;
@@ -344,7 +344,6 @@ void RangeSensorLayer::updateCostmap(sensor_msgs::Range& range_message, bool cle
   last_reading_time_ = ros::Time::now();
 }
 
-
 void RangeSensorLayer::update_cell(double ox, double oy, double ot, double r, double nx, double ny, bool clear)
 {
   unsigned int x, y;
@@ -419,7 +418,7 @@ void RangeSensorLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i
     for (int i = min_i; i < max_i; i++)
     {
       unsigned char prob = costmap_[it];
-          unsigned char old_cost = master_array[it];
+      unsigned char old_cost = master_array[it];
       unsigned char current;
       if(prob==costmap_2d::NO_INFORMATION){
         it++;
